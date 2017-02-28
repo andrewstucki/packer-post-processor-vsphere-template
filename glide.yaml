@@ -1,0 +1,10 @@
+package: github.com/andrewstucki/packer-post-processor-vsphere-upload
+import:
+- package: github.com/vmware/govmomi
+  version: ^0.12.1
+  subpackages:
+  - find
+  - property
+  - units
+  - vim25/mo
+  - vim25/types

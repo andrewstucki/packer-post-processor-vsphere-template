@@ -1,0 +1,51 @@
+hash: 95c5a81fc0456897aac7aa29affce9e45d4672fe8fa4084dca41e25149945a95
+updated: 2017-02-28T14:43:51.017368114-06:00
+imports:
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-multierror
+  version: ed905158d87462226a13fe39ddf685ea65f1c11f
+- name: github.com/hashicorp/go-version
+  version: 03c5bf6be031b6dd45afec16b1cf94fc8938bc77
+- name: github.com/hashicorp/yamux
+  version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
+- name: github.com/mitchellh/iochan
+  version: 87b45ffd0e9581375c491fef3d32130bb15c5bd7
+- name: github.com/mitchellh/mapstructure
+  version: db1efb556f84b25a0a13a04aad883943538ad2e0
+- name: github.com/mitchellh/packer
+  version: 9de8545875a287582114546fe12d29401a886733
+  subpackages:
+  - common/uuid
+  - helper/config
+  - packer
+  - packer/plugin
+  - packer/rpc
+  - template
+  - template/interpolate
+- name: github.com/mitchellh/reflectwalk
+  version: 417edcfd99a4d472c262e58f22b4bfe97580f03e
+- name: github.com/ugorji/go
+  version: c88ee250d0221a57af388746f5cf03768c21d6e2
+  subpackages:
+  - codec
+- name: github.com/vmware/govmomi
+  version: 6103db21b38cbdfda3100fed08b988fc2d83aa1a
+  subpackages:
+  - find
+  - list
+  - object
+  - ovf
+  - property
+  - session
+  - task
+  - units
+  - vim25
+  - vim25/debug
+  - vim25/methods
+  - vim25/mo
+  - vim25/progress
+  - vim25/soap
+  - vim25/types
+  - vim25/xml
+testImports: []
