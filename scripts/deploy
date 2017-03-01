@@ -2,5 +2,5 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 if [ ! -z "$TRAVIS_TAG" ]; then
-  ghr --username andrewstucki --repository packer-post-processor-vsphere-template "$DIR/build"
+  ghr --username andrewstucki --repository packer-post-processor-vsphere-template $TRAVIS_TAG "$DIR/build"
 fi
