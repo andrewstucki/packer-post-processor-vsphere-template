@@ -1,2 +1,4 @@
 packer-post-processor-*
 vendor
+.DS_Store
+build
