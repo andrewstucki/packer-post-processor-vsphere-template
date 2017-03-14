@@ -44,7 +44,9 @@ type OVF struct {
 	Username        string `mapstructure:"username"`
 	Folder          string `mapstructure:"folder"`
 	ResourcePool    string `mapstructure:"resource_pool"`
+	VmName          string `mapstructure:"vm_name"`
 	OsType          string `mapstructure:"os_type"`
+	OsVersion       string `mapstructure:"os_version"`
 	OsID            string `mapstructure:"os_id"`
 	HardwareVersion string `mapstructure:"hardware_version"`
 
@@ -76,7 +78,12 @@ func (o *OVF) normalizeOVF(content []byte) {
 	})
 	content = virtualboxVboxRe.ReplaceAll(content, []byte(""))
 	// make some of this stuff configurable
-	newOSSection := fmt.Sprintf(`<OperatingSystemSection ovf:id="%s" vmw:osType="%s">`, o.OsID, o.OsType)
+	var newOSSection string
+	if o.OsVersion == "" {
+		newOSSection = fmt.Sprintf(`<OperatingSystemSection ovf:id="%s" vmw:osType="%s">`, o.OsID, o.OsType)
+	} else {
+		newOSSection = fmt.Sprintf(`<OperatingSystemSection ovf:id="%s" ovf:version="%s" vmw:osType="%s">`, o.OsID, o.OsVersion, o.OsType)
+	}
 	content = virtualboxOSRe.ReplaceAll(content, []byte(newOSSection))
 	newHardwareSection := fmt.Sprintf("<vssd:VirtualSystemType>%s</vssd:VirtualSystemType>", o.HardwareVersion)
 	o.contents = virtualboxRe.ReplaceAll(content, []byte(newHardwareSection))
@@ -193,6 +200,10 @@ func (o *OVF) upload() (*types.ManagedObjectReference, error) {
 		if o.envelope.VirtualSystem.Name != nil {
 			name = *o.envelope.VirtualSystem.Name
 		}
+	}
+
+	if o.VmName != "" {
+		name = o.VmName
 	}
 
 	log.Printf("Configuring import location for '%s'", name)
