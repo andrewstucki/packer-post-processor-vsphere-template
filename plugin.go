@@ -235,10 +235,20 @@ func (o *OVF) upload() (*types.ManagedObjectReference, error) {
 		return nil, err
 	}
 
-	log.Printf("Finding resource pool '%s'", fmt.Sprintf("/%s/host/%s/Resources", o.Datacenter, o.ResourcePool))
-	resourcePool, err := finder.ResourcePool(ctx, o.ResourcePool)
-	if err != nil {
-		return nil, err
+	var resourcePool *object.ResourcePool
+
+	if o.ResourcePool != "" {
+		log.Printf("Finding resource pool '%s'", fmt.Sprintf("/%s/host/%s/Resources", o.Datacenter, o.ResourcePool))
+		resourcePool, err = finder.ResourcePool(ctx, o.ResourcePool)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		log.Print("Using default resource pool")
+		resourcePool, err = finder.DefaultResourcePool(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	manager := object.NewOvfManager(o.client)
@@ -359,17 +369,19 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		p.config.HardwareVersion = "vmx-10"
 	}
 
+	if p.config.Folder == "" {
+		p.config.Folder = "/"
+	}
+
 	// Accumulate any errors
 	errs := new(packer.MultiError)
 
 	templates := map[string]*string{
-		"datacenter":    &p.config.Datacenter,
-		"host":          &p.config.Host,
-		"password":      &p.config.Password,
-		"username":      &p.config.Username,
-		"datastore":     &p.config.Datastore,
-		"folder":        &p.config.Folder,
-		"resource_pool": &p.config.ResourcePool,
+		"datacenter": &p.config.Datacenter,
+		"host":       &p.config.Host,
+		"password":   &p.config.Password,
+		"username":   &p.config.Username,
+		"datastore":  &p.config.Datastore,
 	}
 
 	for key, ptr := range templates {
