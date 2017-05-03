@@ -7,7 +7,7 @@ output step to create OVF files.
 Compatibility
 -------------
 
-So far this has been tested with Virtualbox 5.1.6, VSphere running ESXI 5.5, and packer 0.10.1. I see no
+So far this has been tested with Virtualbox 5.1.6, VSphere running ESXI 5.5 & 6.5, and packer 0.10.1 & 1.0.0. I see no
 reason why other combinations won't work as well.
 
 Installing
