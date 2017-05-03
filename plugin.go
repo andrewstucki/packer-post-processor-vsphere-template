@@ -29,6 +29,7 @@ import (
 var builtins = map[string]string{
 	"mitchellh.virtualbox": "virtualbox",
 	"mitchellh.vmware":     "vmware",
+	"mitchellh.vmware-esx": "vmware",
 }
 
 var virtualboxRe = regexp.MustCompile(`<vssd:VirtualSystemType>virtualbox-(\d)+(\.(\d)+)?<\/vssd:VirtualSystemType>`)
