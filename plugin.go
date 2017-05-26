@@ -13,9 +13,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mitchellh/packer/helper/config"
-	"github.com/mitchellh/packer/packer"
-	"github.com/mitchellh/packer/template/interpolate"
+	"github.com/hashicorp/packer/helper/config"
+	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer/template/interpolate"
 	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/ovf"
@@ -29,6 +29,7 @@ import (
 var builtins = map[string]string{
 	"mitchellh.virtualbox": "virtualbox",
 	"mitchellh.vmware":     "vmware",
+	"mitchellh.vmware-esx": "vmware",
 }
 
 var virtualboxRe = regexp.MustCompile(`<vssd:VirtualSystemType>virtualbox-(\d)+(\.(\d)+)?<\/vssd:VirtualSystemType>`)
@@ -234,10 +235,20 @@ func (o *OVF) upload() (*types.ManagedObjectReference, error) {
 		return nil, err
 	}
 
-	log.Printf("Finding resource pool '%s'", fmt.Sprintf("/%s/host/%s/Resources", o.Datacenter, o.ResourcePool))
-	resourcePool, err := finder.ResourcePool(ctx, o.ResourcePool)
-	if err != nil {
-		return nil, err
+	var resourcePool *object.ResourcePool
+
+	if o.ResourcePool != "" {
+		log.Printf("Finding resource pool '%s'", fmt.Sprintf("/%s/host/%s/Resources", o.Datacenter, o.ResourcePool))
+		resourcePool, err = finder.ResourcePool(ctx, o.ResourcePool)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		log.Print("Using default resource pool")
+		resourcePool, err = finder.DefaultResourcePool(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	manager := object.NewOvfManager(o.client)
@@ -358,17 +369,19 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		p.config.HardwareVersion = "vmx-10"
 	}
 
+	if p.config.Folder == "" {
+		p.config.Folder = "/"
+	}
+
 	// Accumulate any errors
 	errs := new(packer.MultiError)
 
 	templates := map[string]*string{
-		"datacenter":    &p.config.Datacenter,
-		"host":          &p.config.Host,
-		"password":      &p.config.Password,
-		"username":      &p.config.Username,
-		"datastore":     &p.config.Datastore,
-		"folder":        &p.config.Folder,
-		"resource_pool": &p.config.ResourcePool,
+		"datacenter": &p.config.Datacenter,
+		"host":       &p.config.Host,
+		"password":   &p.config.Password,
+		"username":   &p.config.Username,
+		"datastore":  &p.config.Datastore,
 	}
 
 	for key, ptr := range templates {
